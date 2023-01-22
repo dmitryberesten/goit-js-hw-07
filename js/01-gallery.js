@@ -8,7 +8,7 @@ const items = [];
 
 // перебирання масиву об'єктів з файлу './gallery-items.js'
 galleryItems.forEach((element) => {
-  
+
   // створення контейнера div
   const galleryItem = document.createElement("div");
   galleryItem.classList.add("gallery__item"); // додавання класу до тега
@@ -42,8 +42,8 @@ galleryItems.forEach((element) => {
 gallery.append(...items);
 
 // додавання слухача подій до галереї
-gallery.addEventListener("click", (e) => {
-
+document.addEventListener("click", (e) => {
+  
   // Відміна поведінки за замовчуванням,
   // користувач не буде перенаправлений на нову сторінку.
   e.preventDefault();
@@ -57,21 +57,33 @@ gallery.addEventListener("click", (e) => {
   const imgSelected = e.target.getAttribute("data-source");
 
   // створення шаблону випадаючого зображення
-  const template = basicLightbox.create(`
+  const template = basicLightbox.create(
+    `
     <img src="${imgSelected}" width="800" height="600">
-    `);
+    `,
+
+    // обʼєкт налаштувань бібліотеки
+    {
+      // показати
+      onShow: () => {
+        document.addEventListener("keydown", closeModal); // додавання слухача подій
+      },
+      // закрити
+      onClose: () => {
+        document.removeEventListener("keydown", closeModal); // знімання слухача подій
+      },
+    }
+  );
 
   // показ шаблону зображення
   template.show();
 
-  // додавання слухача подій для клавіши
-  gallery.addEventListener("keydown", (e) => {
-
-    // перевірка для клавіші Escape
+  // перевірка натиску клавіші Escape
+  function closeModal(e) {
     if (e.key === "Escape") {
       template.close();
     }
-  });
+  }
 });
 
 // Діма Берестень
